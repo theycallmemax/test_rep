@@ -2,13 +2,13 @@ import os
 
 from celery import Celery
 
-from config.settings import BROKER_RESULT_BACKEND, BROKER_URL
+from config.settings import settings
 
 celery = Celery("prediction_worker")
 
-celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", BROKER_URL)
+celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", settings.BROKER_URL)
 celery.conf.result_backend = os.environ.get(
-    "CELERY_RESULT_BACKEND", BROKER_RESULT_BACKEND
+    "CELERY_RESULT_BACKEND", settings.BROKER_RESULT_BACKEND
 )
 
 celery.conf.update(

@@ -1,6 +1,7 @@
 from datetime import timedelta
 
-from config import configs  # OK
+# from config import settings  # OK
+from config.settings import settings
 from core.entities.auth_schema import (  # OK
     Payload,
     Session,
@@ -40,7 +41,7 @@ class AuthService(BaseService):
             name=found_user.name,
             is_superuser=found_user.is_superuser,
         )
-        token_lifespan = timedelta(minutes=configs.ACCESS_TOKEN_EXPIRE_MINUTES)
+        token_lifespan = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token, expiration_datetime = create_access_token(
             payload.dict(), token_lifespan
         )
@@ -65,7 +66,7 @@ class AuthService(BaseService):
             name=created_user.name,
             is_superuser=created_user.is_superuser,
         )
-        token_lifespan = timedelta(minutes=configs.ACCESS_TOKEN_EXPIRE_MINUTES)
+        token_lifespan = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token, expiration_datetime = create_access_token(
             payload.dict(), token_lifespan
         )

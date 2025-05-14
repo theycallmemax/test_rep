@@ -1,0 +1,40 @@
+FROM python:3.9-slim as base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc-dev \
+    libpq-dev \
+    python3-dev \
+    curl --no-install-recommends
+
+RUN addgroup --gid 1001 myappgroup && \
+    adduser --disabled-password --gecos '' --uid 1001 --gid 1001 myappuser
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN mkdir /project && chown myappuser:myappgroup /project
+
+USER myappuser
+
+# Copy ALL files/directories (including main.py, api/, config/, etc.) into /project
+COPY --chown=myappuser:myappgroup . /project
+WORKDIR /project
+
+EXPOSE 8000 5678
+
+###########DEBUGGER IMAGE###################
+FROM base as debug
+RUN pip install debugpy
+
+# CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m uvicorn main:app --host 0.0.0.0 --port 80
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+
+
+###########PRODUCTION IMAGE###################
+FROM base as prod
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]

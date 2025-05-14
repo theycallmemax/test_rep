@@ -12,6 +12,15 @@ router = APIRouter(
 )
 
 
+# @router.get(path="/health")
+# @inject
+# async def health() -> str:
+#     return "I am alive"
+@router.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+
 @router.post("/sign-in", response_model=BaseUser)
 @inject
 async def sign_in(

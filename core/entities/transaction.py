@@ -1,5 +1,6 @@
-from entities.base_model import BaseModel
 from sqlmodel import Field, Relationship
+
+from core.entities.base_model import BaseModel
 
 
 class Transaction(BaseModel, table=True):

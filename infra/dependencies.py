@@ -3,11 +3,12 @@ from fastapi import Depends
 from jose import jwt
 from pydantic import ValidationError
 
-from config.settings import SECRET_KEY
+# from config import settings
+from config.settings import settings
 from core.entities.auth_schema import Payload
 from core.entities.user_schema import BaseUser
 from infra.container import Container
-from infra.exceptions import AuthError
+from infra.exceptions.exceptions import AuthError
 from infra.security.security_entity import ALGORITHM, JWTBearer
 from service.user_service import UserService
 
@@ -18,7 +19,7 @@ def get_current_user_payload(
     service: UserService = Depends(Provide[Container.user_service]),
 ) -> Payload:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=ALGORITHM)
         token_data = Payload(**payload)
     except (jwt.JWTError, ValidationError):
         raise AuthError(detail="Could not validate credentials")

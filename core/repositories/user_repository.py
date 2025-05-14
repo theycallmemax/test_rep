@@ -17,7 +17,8 @@ from typing import Callable
 
 from sqlalchemy.orm import Session
 
-from config.settings import USER_ACTIVITY_INTERVAL
+# from config import settings
+from config.settings import settings
 from core.entities.user import User
 from core.repositories.base_repository import BaseRepository
 from utils.date import get_now
@@ -29,7 +30,9 @@ class UserRepository(BaseRepository):
 
     def get_users_report(self):
         with self.session_factory() as session:
-            active_since = get_now() - timedelta(minutes=USER_ACTIVITY_INTERVAL)
+            active_since = get_now() - timedelta(
+                minutes=settings.USER_ACTIVITY_INTERVAL
+            )
             active_users_count = (
                 session.query(User)
                 .filter(User.last_activity_at >= active_since)
