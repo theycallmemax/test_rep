@@ -12,9 +12,11 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./frontend /frontend
+# Copy the frontend directory to /app/frontend
+COPY ./frontend /app/frontend
 
-WORKDIR .
+# Set the working directory to /app, which will be in PYTHONPATH
+WORKDIR /app
 
 EXPOSE 5679
 
@@ -22,11 +24,9 @@ EXPOSE 5679
 FROM base as debug
 RUN pip install debugpy
 
-WORKDIR .
-
-CMD python -m debugpy --listen 0.0.0.0:5679 --wait-for-client -m frontend.app
+CMD python -m debugpy --listen 0.0.0.0:5679 --wait-for-client -m frontend.ui_kit.app
 
 ###########START NEW IMAGE: PRODUCTION ###################
 FROM base as prod
 
-CMD ["python", "-m", "frontend.app"]
+CMD ["python", "-m", "frontend.ui_kit.app"]

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   backend:
     build:
-      target: debug
+      target: prod
       context: .
       dockerfile: Dockerfile.backend
     ports:
@@ -40,12 +40,14 @@ services:
 
   frontend:
     build:
-      target: debug
+      target: prod
       context: .
       dockerfile: Dockerfile.frontend
     ports:
       - "9002:9000"
       - "5679:5679"
+    volumes:
+      - ./frontend:/app/frontend
     environment:
       - API_URL=http://backend:80/api
 
